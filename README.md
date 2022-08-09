@@ -5,7 +5,7 @@ Issue
 - People don't know what clothes wear
 
 Goals
-- Clothes recommandations depending on mood of the day
+- Clothes recommendations depending on mood of the day
 
 Users stories
 1. As a user, i want to manage my virtual wardrobe : add, select and delete articles
