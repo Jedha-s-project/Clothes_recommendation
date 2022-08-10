@@ -1,6 +1,6 @@
 # Clothes_recommendation
 
-Issue
+**Issue**
 - There are some clothes never weared
 - People don't know what clothes wear
 
