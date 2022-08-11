@@ -8,3 +8,4 @@ transformers
 torch
 openpyxl
 sentencepiece
+scikit-learn
