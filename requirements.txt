@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 boto3
 pandas 
 gunicorn 
@@ -12,4 +13,20 @@ jupyter
 torch
 tensorflow
 flax
+=======
+boto3
+pandas 
+gunicorn 
+streamlit 
+sklearn 
+matplotlib 
+seaborn 
+plotly
+mlflow
+psycopg2-binary
+jupyter
+torch
+tensorflow
+flax
+>>>>>>> ec5bf6c56a8286dd331e9016d3c79de9dc9e4bc1
 transformers
