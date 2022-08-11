@@ -6,4 +6,5 @@ gunicorn
 jupyter
 transformers
 torch
-#openpyxl
+openpyxl
+sentencepiece
