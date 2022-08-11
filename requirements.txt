@@ -1,0 +1,15 @@
+boto3
+pandas 
+gunicorn 
+streamlit 
+sklearn 
+matplotlib 
+seaborn 
+plotly
+mlflow
+psycopg2-binary
+jupyter
+torch
+tensorflow
+flax
+transformers
