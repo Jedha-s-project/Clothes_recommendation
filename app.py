@@ -17,7 +17,6 @@ st.title(" Good morning! ")
 
 st.markdown("Welcome to you virtual closet")
 
-
 st.text_input(label = "How are you doing today?")
 
 data_load_state = st.text('Loading data...')
