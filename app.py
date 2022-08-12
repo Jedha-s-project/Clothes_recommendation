@@ -13,7 +13,7 @@ st.set_page_config(
 photos = "https://github.com/Jedha-s-project/Clothes_recommendation/tree/main/Photos"
 
 ### App
-st.title(" Good morning! ")
+st.title("Good morning!")
 
 st.markdown("Welcome to you virtual closet")
 
