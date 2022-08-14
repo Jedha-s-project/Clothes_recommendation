@@ -34,7 +34,7 @@ add_bg_from_local('background.png')
 photos = "https://github.com/Jedha-s-project/Clothes_recommendation/tree/main/Photos"
 
 ### App
-st.title("Don't look out: clothes denied")
+st.title("Don't look out : clothes denied ! ⭐ ")
 
 st.markdown("Good morning and welcome to you virtual closet")
 
@@ -57,7 +57,7 @@ def clothes_reco (mood) :
   st.markdown(F"your clothe recommendation is {clothes_reco_mood}")
   return clothes_reco_mood
 
-if st.button('Clothes reco'):
+if st.button('Find my clothe ! '):
      clothes_reco (mood)
 
 
