@@ -36,7 +36,7 @@ photos = "https://github.com/Jedha-s-project/Clothes_recommendation/tree/main/Ph
 ### App
 st.title("Don't look out, clothing denial ! 🙈 ")
 
-st.markdown("Good morning and welcome to you virtual closet")
+st.subheader("Good morning and welcome to you virtual closet")
 st.markdown("You never know what to wear in the morning ? You end up going back to the same basic clothes? However, in the stores, you can't resist in front of this little dress or this umpteenth little top that suits you perfectly and that you already imagine wearing!  ")
 st.markdown("Our application offers you to choose your outfit for you ! It's very simple:")
 st.markdown("1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?")
