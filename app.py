@@ -11,9 +11,26 @@ import base64
 ### Config
 st.set_page_config(
     page_title="Don't look out: clothes denied",
-    page_icon="⭐ ",
+    page_icon="🌟",
     layout="wide"
 )
+
+### Pages
+st.selectbox(
+  'Gender',
+  ('Female','Male')
+)
+
+### Side bar 
+st.sidebar.header("Choose your clothes with Don't look out")
+st.sidebar.markdown("""
+    * [About](#About)
+    * [Virtual Closet](#virtual-closet)
+    * [Update](#update)
+""")
+e = st.sidebar.empty()
+e.write("")
+st.sidebar.write("Made with 💖 by Coralie & Fanny")
 
 ### Background
 def add_bg_from_local(image_file):
@@ -62,26 +79,53 @@ data = pd.read_excel("./Dataset/Clothes_table.xlsx")
 data["cos_sim_list"] = ""
 X = model5.encode(mood).reshape(1, -1)
 
+#def clothes_reco (mood) :
+  #for i in range (len(data)) :
+   #Y = model5.encode(data.loc[i]["description"]).reshape(1, -1)
+    #cos_sim_mood = cosine_similarity(X,Y)
+    #data.loc[i]["cos_sim_list"] = cos_sim_mood
+  #clothes_reco_mood = str(data.sort_values(by=['cos_sim_list'], ascending=False).head(1)["id_clothes"].values[0])
+  #clothes_description = str(data.sort_values(by=['cos_sim_list'], ascending=False).head(1)["description"].values[0])
+  #image = Image.open(F'./Photos/{clothes_reco_mood}.jpg')
+  #st.image(image, caption=clothes_reco_mood)
+  #st.markdown(F"Your clothe recommendation is {clothes_reco_mood}")
+  #st.markdown(F"Clothe description : {clothes_description}")
+  #return clothes_reco_mood
+
+#dictionnaire
+dict_corr = {
+    'debardeur': ['debardeur', 'pantalon', 'gilet'], 
+    'tshirt' : ['tshirt', 'pantalon', 'gilet'], 
+    'pull' : ['pull', 'pantalon', 'jupe'],
+    'veste' : ['veste', 'tshirt', 'pantalon'], 
+    'gilet' : ['gilet', 'pantalon', 'robe'],
+    'robe': ['robe', 'gilet', 'veste'],
+    'short': ['short', 'debardeur', 'tshirt'], 
+    'blouse': ['blouse', 'pantalon', 'veste'], 
+    'jupe': ['jupe', 'debardeur', 'tshirt'], 
+    'pantalon': ['pantalon', 'blouse', 'tshirt']
+    }
+
 def clothes_reco (mood) :
-  for i in range (len(data)) :
-    Y = model5.encode(data.loc[i]["description"]).reshape(1, -1)
-    cos_sim_mood = sklearn.metrics.pairwise.cosine_similarity(X,Y)
-    data.loc[i]["cos_sim_list"] = cos_sim_mood
-  clothes_reco_mood = str(data.sort_values(by=['cos_sim_list'], ascending=False).head(1)["id_clothes"].values[0])
-  image = Image.open(F'./Photos/{clothes_reco_mood}.jpg')
-  st.image(image, caption=clothes_reco_mood)
-  st.markdown(F"your clothe recommendation is {clothes_reco_mood}")
-  return clothes_reco_mood
+  Y = model5.encode(data["description"])
+  cos_sim_mood = cosine_similarity(X,Y)
+  data["cos_sim_list"] = list(cos_sim_mood[0])
+
+  clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
+  clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True) 
+
+  for i in range (len(clothes_reco_3)) :
+      product_name = str(clothes_reco_3.loc[i]['id_clothes'])
+      st.markdown(F"Your clothe recommendation is {product_name}")
+      st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
+      st.image(Image.open(F'./Photos/{product_name}.jpg'), width=500)
+      
+  return clothes_reco
 
 if st.button('Find my clothe ! '):
      clothes_reco (mood)
 
 
-#with open("flower.png", "rb") as file:
-     #btn = st.download_button(
-             #label="Download image",
-             #data=file,
-             #file_name="flower.png",
-             #mime="image/png"
-           #)
+
+
 
