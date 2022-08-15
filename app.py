@@ -5,6 +5,8 @@ from PIL import Image
 from sentence_transformers import SentenceTransformer
 import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
+import base64
+
 
 ### Config
 st.set_page_config(
@@ -13,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-import base64
+### Background
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
@@ -31,31 +33,33 @@ def add_bg_from_local(image_file):
 add_bg_from_local('background.png')   
 
 
-photos = "https://github.com/Jedha-s-project/Clothes_recommendation/tree/main/Photos"
+# photos = "https://github.com/Jedha-s-project/Clothes_recommendation/tree/main/Photos" = quel intérêt si elles sont en local ?
 
 ### App
+
+# Titre
 st.title("Don't look out, clothing denial ! 🙈 ")
 
+# Sous titre
 st.subheader("Good morning and welcome to you virtual closet")
+
+# Présentation 
 st.markdown("You never know what to wear in the morning ? You end up going back to the same basic clothes? However, in the stores, you can't resist in front of this little dress or this umpteenth little top that suits you perfectly and that you already imagine wearing!  ")
 st.markdown("Our application offers you to choose your outfit for you ! It's very simple:")
 st.markdown("1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?")
 st.markdown("2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !")
 st.markdown("Fantastic, right?")
 
-model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-
-data = pd.read_excel("./Dataset/Clothes_table.xlsx")
-data["cos_sim_list"] = ""
-
-
+# Texte d'entrée
 st.subheader("How are you doing today ?⭐")
 col1, col2 = st.columns(2)
 with col1:
     mood = st.text_input(label = "Please, tell me how you feel !")
 
-
-
+# Algo de recommandation
+model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+data = pd.read_excel("./Dataset/Clothes_table.xlsx")
+data["cos_sim_list"] = ""
 X = model5.encode(mood).reshape(1, -1)
 
 def clothes_reco (mood) :
@@ -71,7 +75,6 @@ def clothes_reco (mood) :
 
 if st.button('Find my clothe ! '):
      clothes_reco (mood)
-
 
 
 #with open("flower.png", "rb") as file:
