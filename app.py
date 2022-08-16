@@ -25,16 +25,12 @@ def About():
     st.markdown("1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?")
     st.markdown("2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !")
     st.markdown("Fantastic, right?")
-    st.selectbox(
-      'Gender',
-      ('Female','Male')
-    )
     st.sidebar.markdown("# About 🤓")
 
 ###Deuxième page
 def Virtual_closet():
 
-    st.markdown("# 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
+    st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
     st.sidebar.markdown("# Virtual closet")
     # Texte d'entrée
     st.subheader("How are you doing today ?⭐")
@@ -50,14 +46,14 @@ def Virtual_closet():
 
     #dictionnaire
     dict_corr = {
-      'debardeur': ['debardeur', 'pantalon', 'gilet'], 
-      'tshirt' : ['tshirt', 'pantalon', 'gilet'], 
+      'debardeur': ['debardeur', 'pantalon', 'jupe'], 
+      'tshirt' : ['tshirt', 'pantalon', 'short'], 
       'pull' : ['pull', 'pantalon', 'jupe'],
-      'veste' : ['veste', 'tshirt', 'pantalon'], 
+      #'veste' : ['veste', 'tshirt', 'pantalon'], 
       'gilet' : ['gilet', 'pantalon', 'robe'],
-      'robe': ['robe', 'gilet', 'veste'],
+      'robe': ['robe', 'gilet'],
       'short': ['short', 'debardeur', 'tshirt'], 
-      'blouse': ['blouse', 'pantalon', 'veste'], 
+      'blouse': ['blouse', 'pantalon'], 
       'jupe': ['jupe', 'debardeur', 'tshirt'], 
       'pantalon': ['pantalon', 'blouse', 'tshirt']
     }
@@ -67,22 +63,53 @@ def Virtual_closet():
       cos_sim_mood = cosine_similarity(X,Y)
       data["cos_sim_list"] = list(cos_sim_mood[0])
 
+
       clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
       clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True) 
 
       for i in range (len(clothes_reco_3)) :
         product_name = str(clothes_reco_3.loc[i]['id_clothes'])
-        st.markdown(F"Your clothe recommendation is {product_name}")
+        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
         st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
-        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=500)
-      
-    #return clothes_reco
-
-    if st.button('Find my clothe !'):
+        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+    
+    if st.button('Find my cloth !'):
       clothes_reco (mood)
+
+      like = st.radio(
+      "Do you like this recommendation",
+      ('Yes', 'No'))
+      if like == 'Yes':
+        st.write('Congratulations, you have your clothes for the day!')
+      else:
+        def clothes_reco_3_swipe (mood) :
+          Y = model5.encode(data["description"])
+          cos_sim_mood = cosine_similarity(X,Y)
+          data["cos_sim_list"] = list(cos_sim_mood[0])
+    
+          clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
+          clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
+      
+          for i in range (len(clothes_reco_3_swipe)) :
+            product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
+            st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+            st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
+            st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+    
+      if st.button('Swipe 👈'):
+        clothes_reco_3_swipe (mood)
+ 
+    #Swipe reco
+
+    st.markdown('If you do not like the recommendation, feel free to swipe!')
+    
+    
+
 
 
 ###Troisième page
+
+
 def Update_virtual_closet():
     st.markdown("# Update virtual closet 🔧")
     st.sidebar.markdown("# Update virtual closet ")
