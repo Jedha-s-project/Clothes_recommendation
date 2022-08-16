@@ -129,10 +129,10 @@ def Update_virtual_closet():
   col1, col2 = st.columns(2)
   
   ## To upload a picture
-
+  i = 10
   with col1:
     uploaded_file = st.file_uploader("Upload a picture")
-    i = 10
+    
     if uploaded_file is not None :
       item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
       item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
@@ -160,8 +160,14 @@ def Update_virtual_closet():
     # Check the type of bytes_data:
     # Should output: <class 'bytes'>
       st.write(type(picture))
+      item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
       item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
-      picture_input = st.download_button(label="Download image", data=picture, file_name="imagename.png", mime="image/png")
+      download_picture_camera = st.button("Save your item")
+      if download_picture_camera :
+        with open(".\Photos", "wb") as f:
+          f.write(picture.getbuffer())
+          st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
+          i += 1 
 
 
 page_names_to_funcs = {
