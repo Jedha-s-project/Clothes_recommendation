@@ -6,6 +6,8 @@ from sentence_transformers import SentenceTransformer
 import sklearn
 from sklearn.metrics.pairwise import cosine_similarity
 import base64
+from pathlib import Path
+import os
 
 
 ### Config
@@ -84,8 +86,56 @@ def Virtual_closet():
 
 ###Troisième page
 def Update_virtual_closet():
-    st.markdown("# Update virtual closet 🔧")
-    st.sidebar.markdown("# Update virtual closet ")
+  st.markdown("# Update virtual closet 🔧")
+  st.sidebar.markdown("# Update virtual closet ")
+  data_page_3 = pd.read_excel("./Dataset/Clothes_table.xlsx")
+
+  ## Explore the virtual closet
+  st.subheader("Explore your virtual closet")
+  category_to_display = st.selectbox("Select a clothing category you want to see", data_page_3["category"].sort_values().unique())
+  #nouvelle_liste = [x for x in data_page_3["id_clothes"] if data_page_3.loc[x]['category'] == category_to_display]
+  #st.image(Image.open(F"{nouvelle_liste}".png), width=500)
+    
+
+  ## Add a new item
+  st.subheader("Add a new item")
+  col1, col2 = st.columns(2)
+  
+  ## To upload a picture
+
+  with col1:
+    uploaded_file = st.file_uploader("Upload a picture")
+    i = 10
+    if uploaded_file is not None :
+      item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
+      item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
+      file_details = {uploaded_file.name : F"{item_category}_{i}.jpg", uploaded_file.type : "jpg"}
+      st.write(file_details)
+      img = Image.open(uploaded_file)
+      st.image(img, width=500)
+      st.markdown("**The item is sucessfully Uploaded.**")
+
+      download_picture = st.button("Save your item")
+      if download_picture :
+        with open(".\Photos", "wb") as f:
+          f.write(uploaded_file.getbuffer())
+          st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
+          i += 1  
+
+        
+
+  ### To take a picture
+  with col2:
+    camera_input = st.camera_input("Take a picture")
+    if camera_input is not None:
+    # To read image file buffer as bytes:
+      picture = camera_input.getvalue()
+    # Check the type of bytes_data:
+    # Should output: <class 'bytes'>
+      st.write(type(picture))
+      item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
+      picture_input = st.download_button(label="Download image", data=picture, file_name="imagename.png", mime="image/png")
+
 
 page_names_to_funcs = {
     "About": About,
