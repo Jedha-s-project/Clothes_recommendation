@@ -9,6 +9,7 @@ import base64
 from pathlib import Path
 import os
 import itertools
+import time
 
 
 ### Config
@@ -129,10 +130,13 @@ def Virtual_closet():
 
     if st.checkbox('Go to my wardrobe !'):
       clothes_reco (mood)
-      st.balloons()
+
+      st.balloons()  
       st.subheader('If you do not like this recommendation, feel free to swipe!')
-    if st.button('Swipe 👈'):
-      clothes_reco_3_swipe (mood)
+    
+      if st.button('Swipe 👈'):
+        clothes_reco_3_swipe (mood)
+        
 
 ###Troisième page
 
