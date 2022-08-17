@@ -55,8 +55,8 @@ if check_password():
         st.subheader("Good morning and welcome to you virtual closet")
         st.markdown("You never know what to wear in the morning ? You end up going back to the same basic clothes? However, in the stores, you can't resist in front of this little dress or this umpteenth little top that suits you perfectly and that you already imagine wearing!  ")
         st.markdown("Our application offers you to choose your outfit for you ! It's very simple:")
-        st.markdown("1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?")
-        st.markdown("2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !")
+        st.markdown("**1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?**")
+        st.markdown("**2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !**")
         st.markdown("Fantastic, right?")
         st.sidebar.markdown("# About 🤓")
 
@@ -103,17 +103,15 @@ if check_password():
           
           clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
           clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
-          st.image(Image.open(F"./Photos/{clothes_reco_3_swipe.loc[0]['id_clothes']}.jpg"), width=250)
-          st.markdown(F"Your cloth recommendation according to your mood is {clothes_reco_3_swipe.loc[0]['id_clothes']}")
-          st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[0]['description']}")
+          st.image(Image.open(F"./Photos/{clothes_reco_3_swipe.loc[0]['id_clothes']}.jpg"), width=350)
+          st.markdown(F"Your cloth recommendation according to your mood is this {clothes_reco_3_swipe.loc[0]['category']} : *{clothes_reco_3_swipe.loc[0]['description']}*")
 
-          st.markdown('With this item, we recommand you :')
+          st.markdown('With this item, we recommand you two options :')
 
           item_imgs_swipe =[]
           for elem in range (1,3) :
               product_name_swipe = str(clothes_reco_3_swipe.loc[elem]['id_clothes'])
               imgs_swipe = Image.open(F'./Photos/{product_name_swipe}.jpg')
-              #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
               item_imgs_swipe.append (imgs_swipe)
           image_iterator_swipe = paginator("", item_imgs_swipe)
           indices_on_page, images_on_page = map(list, zip(*image_iterator_swipe))
@@ -126,11 +124,10 @@ if check_password():
 
           clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
           clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
-          st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=250)
-          st.markdown(F"Your cloth recommendation according to your mood is {clothes_reco_3.loc[0]['id_clothes']}")
-          st.markdown(F"Clothe description : {clothes_reco_3.loc[0]['description']}")
+          st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=350)
+          st.markdown(F"Your cloth recommendation according to your mood is this {clothes_reco_3.loc[0]['category']} : *{clothes_reco_3.loc[0]['description']}*")
           
-          st.markdown('With this item, we recommand you :')
+          st.markdown('With this item, we recommand you two options :')
 
           item_imgs =[]
           for elem in range (1,3) :
@@ -149,7 +146,7 @@ if check_password():
         st.subheader("How are you doing today ?⭐")
         col1, col2 = st.columns(2)
         with col1:
-            mood = st.text_input(label = "Please, tell me how you feel !")
+            mood = st.text_input(label = "")
 
         # Algo de recommandation
         model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
@@ -160,9 +157,9 @@ if check_password():
         if st.checkbox('Go to my wardrobe !'):
           clothes_reco (mood)
           st.balloons()
-          st.subheader('If you do not like this recommendation, feel free to swipe!')
-        if st.button('Swipe 👈'):
-          clothes_reco_3_swipe (mood)
+          st.markdown('**If you do not like this recommendation, feel free to swipe !**')
+          if st.button('Swipe 👈'):
+            clothes_reco_3_swipe (mood)
 
     ###Troisième page
 
