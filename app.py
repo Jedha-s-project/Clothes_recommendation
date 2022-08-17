@@ -92,17 +92,21 @@ def Virtual_closet():
         #st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
         #st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
         #st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+      st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=250)
+      st.markdown(F"Your cloth recommendation according to your mood is {clothes_reco_3.loc[0]['id_clothes']}")
+      st.markdown(F"Clothe description : {clothes_reco_3.loc[0]['description']}")
+      
+      st.markdown('With this item, we recommand you :')
+
       item_imgs =[]
-      for elem in range (len(clothes_reco_3)) :
+      for elem in range (1,3) :
           product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
-          st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-          st.markdown(F"Cloth description : {clothes_reco_3.loc[elem]['description']}")
           img = Image.open(F'./Photos/{product_name}.jpg')
           #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
           item_imgs.append (img)
       image_iterator = paginator("recommendation", item_imgs)
       indices_on_page, images_on_page = map(list, zip(*image_iterator))
-      st.image(images_on_page, width=250, caption=indices_on_page)
+      st.image(images_on_page, width=200)
           
       
       st.subheader('If you do not like this recommendation, feel free to swipe!')
