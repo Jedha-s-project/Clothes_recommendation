@@ -170,12 +170,12 @@ def Update_virtual_closet():
       item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
       file_details = {uploaded_file.name : F"{item_category}_{i}.jpg", uploaded_file.type : "jpg"}
 
-    download_picture = st.button("Save your item")
-    if download_picture :
-      with open("Downloads", "wb") as f:
-        f.write(uploaded_file.getbuffer())
+      download_picture = st.button("Save your item")
+      if download_picture :
+        with open("Downloads", "wb") as f:
+          f.write(uploaded_file.getbuffer())
         st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
-        i += 1  
+    i += 1  
 
         
   ### To take a picture
