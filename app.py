@@ -73,12 +73,21 @@ def Virtual_closet():
       
       clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
       clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
-        
-      for i in range (len(clothes_reco_3_swipe)) :
-        product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
-        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-        st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
-        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+      st.image(Image.open(F"./Photos/{clothes_reco_3_swipe.loc[0]['id_clothes']}.jpg"), width=250)
+      st.markdown(F"Your cloth recommendation according to your mood is {clothes_reco_3_swipe.loc[0]['id_clothes']}")
+      st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[0]['description']}")
+
+      st.markdown('With this item, we recommand you :')
+
+      item_imgs_swipe =[]
+      for elem in range (1,3) :
+          product_name_swipe = str(clothes_reco_3_swipe.loc[elem]['id_clothes'])
+          imgs_swipe = Image.open(F'./Photos/{product_name_swipe}.jpg')
+          #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
+          item_imgs_swipe.append (imgs_swipe)
+      image_iterator_swipe = paginator("", item_imgs_swipe)
+      indices_on_page, images_on_page = map(list, zip(*image_iterator_swipe))
+      st.image(images_on_page, width=200)
 
     def clothes_reco (mood) :
       Y = model5.encode(data["description"])
@@ -87,11 +96,6 @@ def Virtual_closet():
 
       clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
       clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
-      #for i in range (len(clothes_reco_3)) :
-        #product_name = str(clothes_reco_3.loc[i]['id_clothes'])
-        #st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-        #st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
-        #st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
       st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=250)
       st.markdown(F"Your cloth recommendation according to your mood is {clothes_reco_3.loc[0]['id_clothes']}")
       st.markdown(F"Clothe description : {clothes_reco_3.loc[0]['description']}")
@@ -102,21 +106,15 @@ def Virtual_closet():
       for elem in range (1,3) :
           product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
           img = Image.open(F'./Photos/{product_name}.jpg')
-          #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
           item_imgs.append (img)
-      image_iterator = paginator("recommendation", item_imgs)
+      image_iterator = paginator("Recommendation", item_imgs)
       indices_on_page, images_on_page = map(list, zip(*image_iterator))
       st.image(images_on_page, width=200)
           
-      
-      st.subheader('If you do not like this recommendation, feel free to swipe!')
-      st.balloons()
-      if st.button('Swipe 👈'):
-        with st.spinner('Wait for it...'):
-          clothes_reco_3_swipe (mood)
 
     st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
     st.sidebar.markdown("# Virtual closet")
+    
     # Texte d'entrée
     st.subheader("How are you doing today ?⭐")
     col1, col2 = st.columns(2)
@@ -130,28 +128,11 @@ def Virtual_closet():
     X = model5.encode(mood).reshape(1, -1)
 
     if st.checkbox('Go to my wardrobe !'):
-      with st.spinner('Wait for it...'):
-        clothes_reco (mood)
-      
-
-      
-        
-        
-          
-        
-   #def form_callback():
-      #st.write(st.session_state.my_wardrobe)
-      #st.write(st.session_state.my_checkbox)
-      #st.write(st.session_state.swipe)
-
-    #with st.form(key='my_form'):
-      #button_input = st.button('Go to my wardrobe !', key='my_wardrobe')
-      #checkbox_input = st.checkbox('Yes or No', key='my_checkbox')
-      #ballons_input = st.balloons()
-      #button2_input = st.button('Swipe 👈', key = 'swipe')
-      #submit_button = st.form_submit_button(label='Submit', on_click=form_callback)
-    
-    
+      clothes_reco (mood)
+      st.balloons()
+      st.subheader('If you do not like this recommendation, feel free to swipe!')
+    if st.button('Swipe 👈'):
+      clothes_reco_3_swipe (mood)
 
 ###Troisième page
 
@@ -211,7 +192,7 @@ def Update_virtual_closet():
     if uploaded_file is not None :
       img = Image.open(uploaded_file)
       st.image(img, width=500)
-      st.markdown("**The item is sucessfully Uploaded.**")
+      st.success("**The item is sucessfully Uploaded.**")
       item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
       item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
       file_details = {uploaded_file.name : F"{item_category}_{i}.jpg", uploaded_file.type : "jpg"}
