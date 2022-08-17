@@ -8,6 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import base64
 from pathlib import Path
 import os
+import itertools
 
 
 ### Config
@@ -115,15 +116,42 @@ def Update_virtual_closet():
   data_page_3 = pd.read_excel("./Dataset/Clothes_table.xlsx")
 
   ## Explore the virtual closet
+  def paginator(label, items, items_per_page=10, on_sidebar=True):
+      # Figure out where to display the paginator
+    if on_sidebar:
+      location = st.sidebar.empty()
+    else:
+      location = st.empty()
+
+  # Display a pagination selectbox in the specified location.
+    items = list(items)
+    n_pages = len(items)
+    n_pages = (len(items) - 1) // items_per_page + 1
+    page_format_func = lambda i: "Page %s" % i
+    page_number = location.selectbox(label, range(n_pages), format_func=page_format_func)
+
+  # Iterate over the items in the page to let the user display them.
+    min_index = page_number * items_per_page
+    max_index = min_index + items_per_page
+    return itertools.islice(enumerate(items), min_index, max_index)
+
   st.subheader("Explore your virtual closet")
   category_to_display = st.selectbox("Select a clothing category you want to see", data_page_3["category"].sort_values().unique())
-  #nouvelle_liste = [x for x in data_page_3["id_clothes"] if data_page_3.loc[x]['category'] == category_to_display]
-  #st.image(Image.open(F"{nouvelle_liste}".png), width=500)
   mask = data_page_3["category"] == category_to_display
   product_name = data_page_3["id_clothes"][mask]
+  item_imgs= []
   for elem in product_name :
-    st.image(Image.open(F'./Photos/{elem}.jpg'), width=250)
-    
+    img = Image.open(F'./Photos/{elem}.jpg')
+    #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
+    item_imgs.append (img)
+  image_iterator = paginator("Select a sunset page", item_imgs)
+  indices_on_page, images_on_page = map(list, zip(*image_iterator))
+  st.image(images_on_page, width=150, caption=indices_on_page)
+
+
+
+
+
 
   ## Add a new item
   st.subheader("Add a new item")
@@ -135,13 +163,12 @@ def Update_virtual_closet():
     uploaded_file = st.file_uploader("Upload a picture")
     
     if uploaded_file is not None :
-      item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
-      item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
-      file_details = {uploaded_file.name : F"{item_category}_{i}.jpg", uploaded_file.type : "jpg"}
-      st.write(file_details)
       img = Image.open(uploaded_file)
       st.image(img, width=500)
       st.markdown("**The item is sucessfully Uploaded.**")
+      item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
+      item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
+      file_details = {uploaded_file.name : F"{item_category}_{i}.jpg", uploaded_file.type : "jpg"}
 
     download_picture = st.button("Save your item")
     if download_picture :
