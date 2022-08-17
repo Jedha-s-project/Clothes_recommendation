@@ -33,6 +33,84 @@ def About():
 ###Deuxième page
 def Virtual_closet():
 
+    #dictionnaire
+    dict_corr = {
+      'debardeur': ['debardeur', 'pantalon', 'jupe'], 
+      'tshirt' : ['tshirt', 'pantalon', 'short'], 
+      'pull' : ['pull', 'pantalon', 'jupe'],
+      #'veste' : ['veste', 'tshirt', 'pantalon'], 
+      'gilet' : ['gilet', 'pantalon', 'robe'],
+      'robe': ['robe', 'gilet'],
+      'short': ['short', 'debardeur', 'tshirt'], 
+      'blouse': ['blouse', 'pantalon'], 
+      'jupe': ['jupe', 'debardeur', 'tshirt'], 
+      'pantalon': ['pantalon', 'blouse', 'tshirt']
+      }
+
+    def paginator(label, items, items_per_page=3, on_sidebar=True):
+      # Figure out where to display the paginator
+      if on_sidebar:
+        location = st.sidebar.empty()
+      else:
+        location = st.empty()
+
+    # Display a pagination selectbox in the specified location.
+      items = list(items)
+      n_pages = len(items)
+      n_pages = (len(items) - 1) // items_per_page + 1
+      page_format_func = lambda i: "Page %s" % i
+      page_number = location.selectbox(label, range(n_pages), format_func=page_format_func)
+
+    # Iterate over the items in the page to let the user display them.
+      min_index = page_number * items_per_page
+      max_index = min_index + items_per_page
+      return itertools.islice(enumerate(items), min_index, max_index)
+
+    def clothes_reco_3_swipe (mood) :
+      Y = model5.encode(data["description"])
+      cos_sim_mood = cosine_similarity(X,Y)
+      data["cos_sim_list"] = list(cos_sim_mood[0])
+      
+      clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
+      clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
+        
+      for i in range (len(clothes_reco_3_swipe)) :
+        product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
+        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+        st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
+        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+
+    def clothes_reco (mood) :
+      Y = model5.encode(data["description"])
+      cos_sim_mood = cosine_similarity(X,Y)
+      data["cos_sim_list"] = list(cos_sim_mood[0])
+
+      clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
+      clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
+      #for i in range (len(clothes_reco_3)) :
+        #product_name = str(clothes_reco_3.loc[i]['id_clothes'])
+        #st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+        #st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
+        #st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+      item_imgs =[]
+      for elem in range (len(clothes_reco_3)) :
+          product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
+          st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+          st.markdown(F"Cloth description : {clothes_reco_3.loc[elem]['description']}")
+          img = Image.open(F'./Photos/{product_name}.jpg')
+          #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
+          item_imgs.append (img)
+      image_iterator = paginator("recommendation", item_imgs)
+      indices_on_page, images_on_page = map(list, zip(*image_iterator))
+      st.image(images_on_page, width=250, caption=indices_on_page)
+          
+      
+      st.subheader('If you do not like this recommendation, feel free to swipe!')
+      st.balloons()
+      if st.button('Swipe 👈'):
+        with st.spinner('Wait for it...'):
+          clothes_reco_3_swipe (mood)
+
     st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
     st.sidebar.markdown("# Virtual closet")
     # Texte d'entrée
@@ -47,64 +125,28 @@ def Virtual_closet():
     data["cos_sim_list"] = ""
     X = model5.encode(mood).reshape(1, -1)
 
-    #dictionnaire
-    dict_corr = {
-      'debardeur': ['debardeur', 'pantalon', 'jupe'], 
-      'tshirt' : ['tshirt', 'pantalon', 'short'], 
-      'pull' : ['pull', 'pantalon', 'jupe'],
-      #'veste' : ['veste', 'tshirt', 'pantalon'], 
-      'gilet' : ['gilet', 'pantalon', 'robe'],
-      'robe': ['robe', 'gilet'],
-      'short': ['short', 'debardeur', 'tshirt'], 
-      'blouse': ['blouse', 'pantalon'], 
-      'jupe': ['jupe', 'debardeur', 'tshirt'], 
-      'pantalon': ['pantalon', 'blouse', 'tshirt']
-    }
-
-    def clothes_reco (mood) :
-      Y = model5.encode(data["description"])
-      cos_sim_mood = cosine_similarity(X,Y)
-      data["cos_sim_list"] = list(cos_sim_mood[0])
-
-
-      clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
-      clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True) 
-
-      for i in range (len(clothes_reco_3)) :
-        product_name = str(clothes_reco_3.loc[i]['id_clothes'])
-        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-        st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
-        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
-    
-    if st.button('Find my cloth !'):
-      clothes_reco (mood)
-
-      like = st.radio(
-      "Do you like this recommendation",
-      ('Yes', 'No'))
-      if like == 'Yes':
-        st.write('Congratulations, you have your clothes for the day!')
-      else:
-        def clothes_reco_3_swipe (mood) :
-          Y = model5.encode(data["description"])
-          cos_sim_mood = cosine_similarity(X,Y)
-          data["cos_sim_list"] = list(cos_sim_mood[0])
-    
-          clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
-          clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
+    if st.checkbox('Go to my wardrobe !'):
+      with st.spinner('Wait for it...'):
+        clothes_reco (mood)
       
-          for i in range (len(clothes_reco_3_swipe)) :
-            product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
-            st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-            st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
-            st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
-    
-      if st.button('Swipe 👈'):
-        clothes_reco_3_swipe (mood)
- 
-    #Swipe reco
 
-    st.markdown('If you do not like the recommendation, feel free to swipe!')
+      
+        
+        
+          
+        
+   #def form_callback():
+      #st.write(st.session_state.my_wardrobe)
+      #st.write(st.session_state.my_checkbox)
+      #st.write(st.session_state.swipe)
+
+    #with st.form(key='my_form'):
+      #button_input = st.button('Go to my wardrobe !', key='my_wardrobe')
+      #checkbox_input = st.checkbox('Yes or No', key='my_checkbox')
+      #ballons_input = st.balloons()
+      #button2_input = st.button('Swipe 👈', key = 'swipe')
+      #submit_button = st.form_submit_button(label='Submit', on_click=form_callback)
+    
     
 
 ###Troisième page
