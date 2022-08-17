@@ -105,9 +105,6 @@ def Virtual_closet():
 
     st.markdown('If you do not like the recommendation, feel free to swipe!')
     
-    
-
-
 
 ###Troisième page
 
@@ -142,32 +139,29 @@ def Update_virtual_closet():
       st.image(img, width=500)
       st.markdown("**The item is sucessfully Uploaded.**")
 
-      download_picture = st.button("Save your item")
-      if download_picture :
-        with open(".\Photos", "wb") as f:
-          f.write(uploaded_file.getbuffer())
-          st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
-          i += 1  
+    download_picture = st.button("Save your item")
+    if download_picture :
+      with open("Downloads", "wb") as f:
+        f.write(uploaded_file.getbuffer())
+        st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
+        i += 1  
 
         
-
   ### To take a picture
   with col2:
     camera_input = st.camera_input("Take a picture")
     if camera_input is not None:
     # To read image file buffer as bytes:
       picture = camera_input.getvalue()
-    # Check the type of bytes_data:
-    # Should output: <class 'bytes'>
-      st.write(type(picture))
-      item_category = st.selectbox("Select the item category", data_page_3["category"].sort_values().unique())
-      item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
-      download_picture_camera = st.button("Save your item")
+      picture_item_category = st.selectbox("Select the category", data_page_3["category"].sort_values().unique())
+      picture_item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
+      
+      download_picture_camera = st.button("Save your item !")
       if download_picture_camera :
-        with open(".\Photos", "wb") as f:
-          f.write(picture.getbuffer())
-          st.success(f'File {F"{item_category}{i}.jpg"} is successfully saved!')
-          i += 1 
+        with open("Downloads", "wb") as f:
+          f.write(camera_input.getbuffer())
+          st.success(f'File {F"{picture_item_category}{i}.jpg"} is successfully saved!')
+        i += 1  
 
 
 page_names_to_funcs = {
