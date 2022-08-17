@@ -119,6 +119,10 @@ def Update_virtual_closet():
   category_to_display = st.selectbox("Select a clothing category you want to see", data_page_3["category"].sort_values().unique())
   #nouvelle_liste = [x for x in data_page_3["id_clothes"] if data_page_3.loc[x]['category'] == category_to_display]
   #st.image(Image.open(F"{nouvelle_liste}".png), width=500)
+  mask = data_page_3["category"] == category_to_display
+  product_name = data_page_3["id_clothes"][mask]
+  for elem in product_name :
+    st.image(Image.open(F'./Photos/{elem}.jpg'), width=250)
     
 
   ## Add a new item
@@ -190,22 +194,6 @@ def add_bg_from_local(image_file):
     unsafe_allow_html=True
     )
 add_bg_from_local('background.png')   
-
-
-### App
-
-#def clothes_reco (mood) :
-  #for i in range (len(data)) :
-   #Y = model5.encode(data.loc[i]["description"]).reshape(1, -1)
-    #cos_sim_mood = cosine_similarity(X,Y)
-    #data.loc[i]["cos_sim_list"] = cos_sim_mood
-  #clothes_reco_mood = str(data.sort_values(by=['cos_sim_list'], ascending=False).head(1)["id_clothes"].values[0])
-  #clothes_description = str(data.sort_values(by=['cos_sim_list'], ascending=False).head(1)["description"].values[0])
-  #image = Image.open(F'./Photos/{clothes_reco_mood}.jpg')
-  #st.image(image, caption=clothes_reco_mood)
-  #st.markdown(F"Your clothe recommendation is {clothes_reco_mood}")
-  #st.markdown(F"Clothe description : {clothes_description}")
-  #return clothes_reco_mood
 
 
 
