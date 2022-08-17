@@ -144,7 +144,7 @@ def Update_virtual_closet():
     img = Image.open(F'./Photos/{elem}.jpg')
     #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
     item_imgs.append (img)
-  image_iterator = paginator("Select a sunset page", item_imgs)
+  image_iterator = paginator("Select a page", item_imgs)
   indices_on_page, images_on_page = map(list, zip(*image_iterator))
   st.image(images_on_page, width=150, caption=indices_on_page)
 
@@ -196,9 +196,9 @@ def Update_virtual_closet():
 
 
 page_names_to_funcs = {
-    "About": About,
-    "Virtual closet": Virtual_closet,
-    "Update virtual closet": Update_virtual_closet,
+    "About us 🤓": About,
+    "Your recommendation of the day 🌟": Virtual_closet,
+    "Admin your virtual closet 🔧": Update_virtual_closet,
 }
 
 selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
