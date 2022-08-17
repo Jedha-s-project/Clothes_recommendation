@@ -32,20 +32,6 @@ def About():
 ###Deuxième page
 def Virtual_closet():
 
-    st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
-    st.sidebar.markdown("# Virtual closet")
-    # Texte d'entrée
-    st.subheader("How are you doing today ?⭐")
-    col1, col2 = st.columns(2)
-    with col1:
-        mood = st.text_input(label = "Please, tell me how you feel !")
-
-    # Algo de recommandation
-    model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-    data = pd.read_excel("./Dataset/Clothes_table.xlsx")
-    data["cos_sim_list"] = ""
-    X = model5.encode(mood).reshape(1, -1)
-
     #dictionnaire
     dict_corr = {
       'debardeur': ['debardeur', 'pantalon', 'jupe'], 
@@ -60,11 +46,24 @@ def Virtual_closet():
       'pantalon': ['pantalon', 'blouse', 'tshirt']
     }
 
+    def clothes_reco_3_swipe (mood) :
+      Y = model5.encode(data["description"])
+      cos_sim_mood = cosine_similarity(X,Y)
+      data["cos_sim_list"] = list(cos_sim_mood[0])
+    
+      clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
+      clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
+      
+      for i in range (len(clothes_reco_3_swipe)) :
+        product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
+        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+        st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
+        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+
     def clothes_reco (mood) :
       Y = model5.encode(data["description"])
       cos_sim_mood = cosine_similarity(X,Y)
       data["cos_sim_list"] = list(cos_sim_mood[0])
-
 
       clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
       clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True) 
@@ -74,36 +73,55 @@ def Virtual_closet():
         st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
         st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
         st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
-    
-    if st.button('Find my cloth !'):
-      clothes_reco (mood)
-
-      like = st.radio(
-      "Do you like this recommendation",
-      ('Yes', 'No'))
-      if like == 'Yes':
-        st.write('Congratulations, you have your clothes for the day!')
-      else:
-        def clothes_reco_3_swipe (mood) :
-          Y = model5.encode(data["description"])
-          cos_sim_mood = cosine_similarity(X,Y)
-          data["cos_sim_list"] = list(cos_sim_mood[0])
-    
-          clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
-          clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
       
-          for i in range (len(clothes_reco_3_swipe)) :
-            product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
-            st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-            st.markdown(F"Clothe description : {clothes_reco_3_swipe.loc[i]['description']}")
-            st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
-    
+      st.subheader('If you do not like this recommendation, feel free to swipe!')
+      st.balloons()
       if st.button('Swipe 👈'):
-        clothes_reco_3_swipe (mood)
- 
-    #Swipe reco
+        with st.spinner('Wait for it...'):
+          clothes_reco_3_swipe (mood)
 
-    st.markdown('If you do not like the recommendation, feel free to swipe!')
+    st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
+    st.sidebar.markdown("# Virtual closet")
+    # Texte d'entrée
+    st.subheader("How are you doing today ?⭐")
+    col1, col2 = st.columns(2)
+    with col1:
+        mood = st.text_input(label = "Please, tell me how you feel !")
+
+    # Algo de recommandation
+    model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+    data = pd.read_excel("./Dataset/Clothes_table.xlsx")
+    data["cos_sim_list"] = ""
+    X = model5.encode(mood).reshape(1, -1)
+
+    if st.checkbox('Go to my wardrobe !'):
+      with st.spinner('Wait for it...'):
+        clothes_reco (mood)
+
+    
+      
+      #if check:
+        #st.balloons()
+
+      #else:
+        #st.write('Welcome to the second choice')
+      
+        
+        
+          
+        
+   #def form_callback():
+      #st.write(st.session_state.my_wardrobe)
+      #st.write(st.session_state.my_checkbox)
+      #st.write(st.session_state.swipe)
+
+    #with st.form(key='my_form'):
+      #button_input = st.button('Go to my wardrobe !', key='my_wardrobe')
+      #checkbox_input = st.checkbox('Yes or No', key='my_checkbox')
+      #ballons_input = st.balloons()
+      #button2_input = st.button('Swipe 👈', key = 'swipe')
+      #submit_button = st.form_submit_button(label='Submit', on_click=form_callback)
+    
     
     
 
