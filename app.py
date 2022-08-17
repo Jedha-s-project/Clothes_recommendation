@@ -45,16 +45,35 @@ def Virtual_closet():
       'blouse': ['blouse', 'pantalon'], 
       'jupe': ['jupe', 'debardeur', 'tshirt'], 
       'pantalon': ['pantalon', 'blouse', 'tshirt']
-    }
+      }
+
+    def paginator(label, items, items_per_page=3, on_sidebar=True):
+      # Figure out where to display the paginator
+      if on_sidebar:
+        location = st.sidebar.empty()
+      else:
+        location = st.empty()
+
+    # Display a pagination selectbox in the specified location.
+      items = list(items)
+      n_pages = len(items)
+      n_pages = (len(items) - 1) // items_per_page + 1
+      page_format_func = lambda i: "Page %s" % i
+      page_number = location.selectbox(label, range(n_pages), format_func=page_format_func)
+
+    # Iterate over the items in the page to let the user display them.
+      min_index = page_number * items_per_page
+      max_index = min_index + items_per_page
+      return itertools.islice(enumerate(items), min_index, max_index)
 
     def clothes_reco_3_swipe (mood) :
       Y = model5.encode(data["description"])
       cos_sim_mood = cosine_similarity(X,Y)
       data["cos_sim_list"] = list(cos_sim_mood[0])
-    
+      
       clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
       clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
-      
+        
       for i in range (len(clothes_reco_3_swipe)) :
         product_name = str(clothes_reco_3_swipe.loc[i]['id_clothes'])
         st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
@@ -67,13 +86,24 @@ def Virtual_closet():
       data["cos_sim_list"] = list(cos_sim_mood[0])
 
       clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
-      clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True) 
-
-      for i in range (len(clothes_reco_3)) :
-        product_name = str(clothes_reco_3.loc[i]['id_clothes'])
-        st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
-        st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
-        st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+      clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
+      #for i in range (len(clothes_reco_3)) :
+        #product_name = str(clothes_reco_3.loc[i]['id_clothes'])
+        #st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+        #st.markdown(F"Clothe description : {clothes_reco_3.loc[i]['description']}")
+        #st.image(Image.open(F'./Photos/{product_name}.jpg'), width=250)
+      item_imgs =[]
+      for elem in range (len(clothes_reco_3)) :
+          product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
+          st.markdown(F"Your cloth recommendation according to your mood is {product_name}")
+          st.markdown(F"Cloth description : {clothes_reco_3.loc[elem]['description']}")
+          img = Image.open(F'./Photos/{product_name}.jpg')
+          #st.image(Image.open(F'./Photos/{elem}.jpg'), width=150, caption=elem)
+          item_imgs.append (img)
+      image_iterator = paginator("recommendation", item_imgs)
+      indices_on_page, images_on_page = map(list, zip(*image_iterator))
+      st.image(images_on_page, width=250, caption=indices_on_page)
+          
       
       st.subheader('If you do not like this recommendation, feel free to swipe!')
       st.balloons()
@@ -98,14 +128,8 @@ def Virtual_closet():
     if st.checkbox('Go to my wardrobe !'):
       with st.spinner('Wait for it...'):
         clothes_reco (mood)
-
-    
       
-      #if check:
-        #st.balloons()
 
-      #else:
-        #st.write('Welcome to the second choice')
       
         
         
