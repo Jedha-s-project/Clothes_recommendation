@@ -61,14 +61,21 @@ if check_password():
         st.sidebar.markdown("# About 🤓")
 
     ###Deuxième page
+    
     def Virtual_closet():
+
+        if 'button_clicked' not in st.session_state :
+          st.session_state.button_clicked = False
+    
+        def callback() :
+          st.session_state.button_clicked = True
 
         #dictionnaire
         dict_corr = {
           'debardeur': ['debardeur', 'pantalon', 'jupe'], 
           'tshirt' : ['tshirt', 'pantalon', 'short'], 
           'pull' : ['pull', 'pantalon', 'jupe'],
-          #'veste' : ['veste', 'tshirt', 'pantalon'], 
+          'veste' : ['veste', 'tshirt', 'pantalon'], 
           'gilet' : ['gilet', 'pantalon', 'robe'],
           'robe': ['robe', 'gilet', 'veste'],
           'short': ['short', 'debardeur', 'tshirt'], 
@@ -154,11 +161,11 @@ if check_password():
         data["cos_sim_list"] = ""
         X = model5.encode(mood).reshape(1, -1)
 
-        if st.checkbox('Go to my wardrobe !'):
+        if (st.button('Go to my wardrobe !', on_click=callback) or st.session_state.button_clicked ):
           clothes_reco (mood)
           st.balloons()
           st.markdown('**If you do not like this recommendation, feel free to swipe !**')
-          if st.button('Swipe 👈'):
+          if (st.button('Swipe 👈', on_click=callback) or st.session_state.button_clicked):
             clothes_reco_3_swipe (mood)
 
     ###Troisième page
