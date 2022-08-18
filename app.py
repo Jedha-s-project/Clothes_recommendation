@@ -68,7 +68,7 @@ if check_password():
           'debardeur': ['debardeur', 'pantalon', 'jupe'], 
           'tshirt' : ['tshirt', 'pantalon', 'short'], 
           'pull' : ['pull', 'pantalon', 'jupe'],
-          #'veste' : ['veste', 'tshirt', 'pantalon'], 
+          'veste' : ['veste', 'tshirt', 'pantalon'], 
           'gilet' : ['gilet', 'pantalon', 'robe'],
           'robe': ['robe', 'gilet', 'veste'],
           'short': ['short', 'debardeur', 'tshirt'], 
@@ -161,7 +161,7 @@ if check_password():
         data = pd.read_excel("./Dataset/Clothes_table.xlsx")
         data["cos_sim_list"] = ""
         X = model5.encode(mood).reshape(1, -1)
-
+            
         if st.checkbox('Go to my wardrobe !'):
           clothes_reco (mood)
           st.balloons()
