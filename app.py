@@ -70,9 +70,9 @@ if check_password():
           'pull' : ['pull', 'pantalon', 'jupe'],
           #'veste' : ['veste', 'tshirt', 'pantalon'], 
           'gilet' : ['gilet', 'pantalon', 'robe'],
-          'robe': ['robe', 'gilet'],
+          'robe': ['robe', 'gilet', 'veste'],
           'short': ['short', 'debardeur', 'tshirt'], 
-          'blouse': ['blouse', 'pantalon'], 
+          'blouse': ['blouse', 'pantalon', 'jupe'], 
           'jupe': ['jupe', 'debardeur', 'tshirt'], 
           'pantalon': ['pantalon', 'blouse', 'tshirt']
           }
