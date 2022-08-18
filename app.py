@@ -156,7 +156,15 @@ if check_password():
             mood = st.text_input(label = "")
 
         # Algo de recommandation
-        model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+        #model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+        #data = pd.read_excel("./Dataset/Clothes_table.xlsx")
+        #data["cos_sim_list"] = ""
+        #X = model5.encode(mood).reshape(1, -1)
+        @st.cache(allow_output_mutation=True)
+        def load_model(model_name):
+          model5 = SentenceTransformer(model_name)
+          return (model5)
+        model5 = load_model("paraphrase-multilingual-mpnet-base-v2")
         data = pd.read_excel("./Dataset/Clothes_table.xlsx")
         data["cos_sim_list"] = ""
         X = model5.encode(mood).reshape(1, -1)
