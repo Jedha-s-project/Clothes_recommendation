@@ -5,4 +5,5 @@ scikit_learn==1.1.2
 transformers 
 streamlit==1.12.0
 openpyxl
-torch
+torch==1.11.0+cpu
+torchvision==0.12.0+cpu
