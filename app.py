@@ -170,8 +170,8 @@ if check_password():
             
         #if (st.button('Go to my wardrobe !', on_click=callback) or st.session_state.button_clicked ):
           #clothes_reco (mood)
-          st.balloons()
-          st.markdown('**If you do not like this recommendation, feel free to swipe !**')
+          #st.balloons()
+          #st.markdown('**If you do not like this recommendation, feel free to swipe !**')
           #if (st.button('Swipe 👈', on_click=callback) or st.session_state.button_clicked):
             #clothes_reco_3_swipe (mood)
 
