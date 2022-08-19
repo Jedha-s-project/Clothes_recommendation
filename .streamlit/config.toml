@@ -5,8 +5,5 @@ secondaryBackgroundColor="#FDFAFA"
 textColor="#31333F"
 font="serif"
 
-[browser]
-serverAddress = '0.0.0.0'
-
 [global]
 dataFrameSerialization = "legacy"
