@@ -172,8 +172,9 @@ if check_password():
           clothes_reco (mood)
           st.balloons()
           st.markdown('**If you do not like this recommendation, feel free to swipe !**')
-          if (st.button('Swipe 👈', on_click=callback) or st.session_state.button_clicked):
-            clothes_reco_3_swipe (mood)
+          
+          if (st.button('Swipe 👈', on_click=callback)):
+              clothes_reco_3_swipe (mood)
 
     ###Troisième page
 
@@ -248,7 +249,7 @@ if check_password():
         # To read image file buffer as bytes:
           picture = camera_input.getvalue()
           picture_item_category = st.selectbox("Select the category", data_page_3["category"].sort_values().unique())
-          picture_item_description = st.text_input(label = "Why did you buy this clothing? In what circumstances do you imagine yourself wearing it?")
+          picture_item_description = st.text_input(label = "Why did you buy this item ? In what circumstances do you imagine yourself wearing it?")
           
           download_picture_camera = st.button("Save your item !")
           if download_picture_camera :
