@@ -1,10 +1,7 @@
--f https://download.pytorch.org/whl/torch_stable.html
 numpy==1.23.1
 pandas==1.4.3
 Pillow==9.2.0
 scikit_learn==1.1.2
-transformers 
+sentence_transformers==2.2.2
 streamlit==1.12.0
 openpyxl
-torch==1.11.0+cpu
-torchvision==0.12.0+cpu

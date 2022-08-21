@@ -7,3 +7,6 @@ font="serif"
 
 [global]
 dataFrameSerialization = "legacy"
+
+[browser]
+serverAddress = "localhost"
