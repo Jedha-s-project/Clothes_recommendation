@@ -51,7 +51,7 @@ https://share.vidyard.com/watch/95gwXFzFWPqU8kHNNrAz5i?
 
 ## Deployment
 
-You won't be able to deploy this project with the free version of Heroku, as Sentence Transfromer is too heavy.
+You won't be able to deploy this project with the free version of Heroku, as Sentence Transformers is too heavy.
 
 
 ## Authors
