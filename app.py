@@ -53,10 +53,10 @@ if check_password():
         st.markdown("# About 🤓")
         st.title("Don't look out, clothing denial ! 🙈 ")
         st.subheader("Good morning and welcome to you virtual closet")
-        st.markdown("You never know what to wear in the morning ? You end up going back to the same basic clothes? However, in the stores, you can't resist in front of this little dress or this umpteenth little top that suits you perfectly and that you already imagine wearing!  ")
+        st.markdown("Are you one of those who wonder how to dress up every morning ? and keep ending up wearing the same clothes ? Well ... This application is made for you 😉 ")
         st.markdown("Our application offers you to choose your outfit for you ! It's very simple:")
-        st.markdown("**1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?**")
-        st.markdown("**2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !**")
+        st.markdown("**1.On each piece of clothing, enter the reason of your purchase: what do you like about this article? What occasion would you wear it ?**")
+        st.markdown("**2.Unsure about what to wear today ? Enter your current mood and our algorithm will make you a personalized recommendation !**")
         st.markdown("Fantastic, right?")
         st.sidebar.markdown("# About 🤓")
 
