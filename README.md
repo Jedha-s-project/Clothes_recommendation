@@ -4,7 +4,7 @@
 Project carried out in two weeks, in August 2022, within the framework of our training Data Fullstack, Jedha's Bootcamp Paris. 
 
 We created a virtual closet, offering you to choose your outfit for you according to your daily mood or your diary.
-The app select one item, the one which best fit your mood and display two more items to wear with. 
+The app select one item, the one which best fits your mood and display two more items to wear with. 
 If you don't agree whith this first proposition, you can swipe to get a second one.
 
 To do so, we used the Sentence Transformer model to evaluate the text similarities between the user's mood (input section) and the description of the clothes (input section description for each items, done once when you put your clothes in your virtual wardrobe).
