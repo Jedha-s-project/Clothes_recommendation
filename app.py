@@ -53,10 +53,10 @@ if check_password():
         st.markdown("# About 🤓")
         st.title("Don't look out, clothing denial ! 🙈 ")
         st.subheader("Good morning and welcome to you virtual closet")
-        st.markdown("You never know what to wear in the morning ? You end up going back to the same basic clothes? However, in the stores, you can't resist in front of this little dress or this umpteenth little top that suits you perfectly and that you already imagine wearing!  ")
+        st.markdown("Are you one of those who wonder how to dress up every morning ? and keep ending up wearing the same clothes ? Well ... This application is made for you 😉 ")
         st.markdown("Our application offers you to choose your outfit for you ! It's very simple:")
-        st.markdown("**1.After each new purchase, enter the reason of your purchase: why do you like this article? In what circumstances do you think you will wear it?**")
-        st.markdown("**2.Are you hesitating in front of your dressing room? Enter your mood of the day and our algorithm will make you a personalized recommendation !**")
+        st.markdown("**1.On each piece of clothing, enter the reason of your purchase: what do you like about this article? What occasion would you wear it ?**")
+        st.markdown("**2.Unsure about what to wear today ? Enter your current mood and our algorithm will make you a personalized recommendation !**")
         st.markdown("Fantastic, right?")
         st.sidebar.markdown("# About 🤓")
 
@@ -102,10 +102,33 @@ if check_password():
           max_index = min_index + items_per_page
           return itertools.islice(enumerate(items), min_index, max_index)
 
-        def clothes_reco_3_swipe (mood) :
-          Y = model5.encode(data["description"])
+
+
+        def clothes_reco (mood) :
+          X = model5.encode(mood).reshape(1, -1)
           cos_sim_mood = cosine_similarity(X,Y)
           data["cos_sim_list"] = list(cos_sim_mood[0])
+
+          clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True) # changement du nom de la variable
+          clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
+          st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=350)
+          st.markdown(F"Your cloth recommendation according to your mood is this {clothes_reco_3.loc[0]['category']} : *{clothes_reco_3.loc[0]['description']}*")
+          
+          st.markdown('With this item, we recommand you two options :')
+
+          item_imgs =[]
+          for elem in range (1,3) :
+              product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
+              img = Image.open(F'./Photos/{product_name}.jpg')
+              item_imgs.append (img)
+          image_iterator = paginator("Recommendation", item_imgs)
+          indices_on_page, images_on_page = map(list, zip(*image_iterator))
+          st.image(images_on_page, width=200)
+              
+        def clothes_reco_3_swipe () :
+          #X = model5.encode(mood).reshape(1, -1)
+          #cos_sim_mood = cosine_similarity(X,Y)
+          #data["cos_sim_list"] = list(cos_sim_mood[0])
           
           clothes_reco_3_swipe = data.sort_values(by=['cos_sim_list'], ascending=False).groupby(by= 'category').head(2).drop_duplicates(subset = 'category', keep = 'last').reset_index(drop=True)
           clothes_reco_3_swipe = clothes_reco_3_swipe[clothes_reco_3_swipe.category.isin(dict_corr[clothes_reco_3_swipe.loc[0]["category"]])].head(3).reset_index(drop=True) 
@@ -123,27 +146,6 @@ if check_password():
           indices_on_page, images_on_page = map(list, zip(*image_iterator_swipe))
           st.image(images_on_page, width=200)
 
-        def clothes_reco (mood) :
-          Y = model5.encode(data["description"])
-          cos_sim_mood = cosine_similarity(X,Y)
-          data["cos_sim_list"] = list(cos_sim_mood[0])
-
-          clothes_reco_3 = data.sort_values(by=['cos_sim_list'], ascending=False).drop_duplicates(subset='category')[["id_clothes", "description", "category"]].reset_index(drop=True)
-          clothes_reco_3 = clothes_reco_3[clothes_reco_3.category.isin(dict_corr[clothes_reco_3.loc[0]["category"]])].head(3).reset_index(drop=True)
-          st.image(Image.open(F"./Photos/{clothes_reco_3.loc[0]['id_clothes']}.jpg"), width=350)
-          st.markdown(F"Your cloth recommendation according to your mood is this {clothes_reco_3.loc[0]['category']} : *{clothes_reco_3.loc[0]['description']}*")
-          
-          st.markdown('With this item, we recommand you two options :')
-
-          item_imgs =[]
-          for elem in range (1,3) :
-              product_name = str(clothes_reco_3.loc[elem]['id_clothes'])
-              img = Image.open(F'./Photos/{product_name}.jpg')
-              item_imgs.append (img)
-          image_iterator = paginator("Recommendation", item_imgs)
-          indices_on_page, images_on_page = map(list, zip(*image_iterator))
-          st.image(images_on_page, width=200)
-              
 
         st.markdown("## 👩 🧔‍♂️ Virtual closet 👕 👗 👚 👔")
         st.sidebar.markdown("# Virtual closet")
@@ -158,23 +160,24 @@ if check_password():
         model5 = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
         data = pd.read_excel("./Dataset/Clothes_table.xlsx")
         data["cos_sim_list"] = ""
-        X = model5.encode(mood).reshape(1, -1)
-        @st.cache(allow_output_mutation=True)
-        def load_model(model_name):
-          model5 = SentenceTransformer(model_name)
-          return (model5)
-        model5 = load_model("paraphrase-multilingual-mpnet-base-v2")
-        data = pd.read_excel("./Dataset/Clothes_table.xlsx")
-        data["cos_sim_list"] = ""
-        X = model5.encode(mood).reshape(1, -1)
-            
-        if (st.button('Go to my wardrobe !', on_click=callback) or st.session_state.button_clicked ):
+        Y = model5.encode(data["description"]) # voir pour sortir la vectorisation de la définition
+        
+        #@st.cache(allow_output_mutation=True)
+        #def load_model(model_name): # A supprimer ? (163-169)
+          #model5 = SentenceTransformer(model_name)
+          #return (model5)
+        #model5 = load_model("paraphrase-multilingual-mpnet-base-v2")
+        #data = pd.read_excel("./Dataset/Clothes_table.xlsx")
+        #data["cos_sim_list"] = ""
+        #X = model5.encode(mood).reshape(1, -1) # A supprimer ? 
+        
+        if st.checkbox("Go to my wardrobe !") : #, on_click=callback) or st.session_state.button_clicked) :
           clothes_reco (mood)
           st.balloons()
           st.markdown('**If you do not like this recommendation, feel free to swipe !**')
-          
-          if (st.button('Swipe 👈', on_click=callback)):
-              clothes_reco_3_swipe (mood)
+
+          if (st.button('Swipe 👈', on_click=callback) or st.session_state.button_clicked ):
+              clothes_reco_3_swipe ()
 
     ###Troisième page
 
